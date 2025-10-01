@@ -1,0 +1,29 @@
+import 'package:flutter/material.dart';
+
+class BlogEditor extends StatelessWidget {
+  const BlogEditor({
+    super.key,
+    required this.controller,
+    required this.hintText,
+    this.maxlines
+  });
+
+  final TextEditingController controller;
+  final String hintText;
+  final int? maxlines;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(hintText: hintText),
+      maxLines: maxlines,
+      validator: (value) {
+        if(value!.trim().isEmpty){
+          return '$hintText is missing';
+        }
+        return null;
+      },
+    );
+  }
+}
