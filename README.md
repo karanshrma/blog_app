@@ -2,6 +2,8 @@
 
 A robust, full-stack blog application built using **Flutter** and **Supabase**, meticulously structured with Clean Architecture and designed with SOLID Principles in mind. The goal of this project was to create a scalable, testable, and maintainable application while delivering a smooth, offline-first user experience.
 
+Walkthrough Video - https://drive.google.com/file/d/1QsD94We63cUrzaq0SiV2Vhmog3U4ZtwO/view?usp=sharing
+
 ## ✨ Key Architectural Highlights
 * **Clean Architecture:** Strict separation of concerns across Data, Domain, and Presentation layers for maximum modularity and testability.
 * **SOLID Principles:** Adherence to principles like Dependency Inversion (implemented via GetIt) to ensure flexible and maintainable code.

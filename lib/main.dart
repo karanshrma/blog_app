@@ -17,7 +17,7 @@ void main() async {
       providers: [
         BlocProvider(create: (_) => serviceLocator<AppUserCubit>()),
         BlocProvider(create: (_) => serviceLocator<AuthBloc>()),
-        BlocProvider(create: (_) => serviceLocator<BlogBloc>()),
+        BlocProvider(create: (_) => serviceLocator<BlogBloc>()..add(BlogFetchAllBlogs())),
 
       ],
       child: MyApp(),

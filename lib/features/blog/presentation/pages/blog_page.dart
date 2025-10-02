@@ -28,12 +28,6 @@ class _BlogPageState extends State<BlogPage> {
     super.initState();
     context.read<BlogBloc>().add(BlogFetchAllBlogs());
   }
-
-  void logout() {
-    context.read<AuthBloc>().add(LogoutRequested());
-    Navigator.pushAndRemoveUntil(context, LoginPage.route(), (route) => false);
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
@@ -44,7 +38,7 @@ class _BlogPageState extends State<BlogPage> {
             Navigator.pushAndRemoveUntil(
               context,
               LoginPage.route(),
-                  (route) => false,
+              (route) => false,
             );
           });
         }
@@ -53,15 +47,16 @@ class _BlogPageState extends State<BlogPage> {
         appBar: AppBar(
           title: const Text('Blog App'),
           actions: [
-            GestureDetector(
-              onTap: () =>
-                  Navigator.pushAndRemoveUntil(
-                      context, AddNewBlogPage.route(), (route) => false),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Icon(Icons.add_circle_outline_rounded),
-              ),
+            IconButton(
+              icon: Icon(Icons.add_circle_outline_rounded),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  AddNewBlogPage.route(),
+                );
+              },
             ),
+
             GestureDetector(
               onTap: () {
                 context.read<AuthBloc>().add(LogoutRequested());
@@ -70,7 +65,7 @@ class _BlogPageState extends State<BlogPage> {
                 padding: const EdgeInsets.all(8.0),
                 child: Icon(Icons.logout),
               ),
-            )
+            ),
           ],
         ),
         body: BlocConsumer<BlogBloc, BlogState>(
@@ -90,9 +85,14 @@ class _BlogPageState extends State<BlogPage> {
                 itemBuilder: (context, index) {
                   final blog = state.blogs[index];
                   return GestureDetector(
-                    onTap: (){
-                      WidgetsBinding.instance.addPostFrameCallback((_){
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => BlogViewerPage(blog: blog)));
+                    onTap: () {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => BlogViewerPage(blog: blog),
+                          ),
+                        );
                       });
                     },
                     child: BlogCard(
@@ -107,7 +107,7 @@ class _BlogPageState extends State<BlogPage> {
                 },
               );
             }
-            return const SizedBox();
+            return const Loader();
           },
         ),
       ),
