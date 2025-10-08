@@ -1,5 +1,4 @@
 import 'package:offline_first/core/error/exceptions.dart';
-import 'package:offline_first/core/secrets/app_secrets.dart';
 import 'package:offline_first/features/auth/data/models/user_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
