@@ -9,6 +9,7 @@ import 'package:offline_first/features/auth/data/datasources/auth_remote_data_so
 import 'package:offline_first/features/auth/data/repositories/auth_repositories_impl.dart';
 import 'package:offline_first/features/auth/domain/repository/auth_repository.dart';
 import 'package:offline_first/features/auth/domain/usecases/current_user.dart';
+import 'package:offline_first/features/auth/domain/usecases/google_sign_in.dart';
 import 'package:offline_first/features/auth/domain/usecases/user_login.dart';
 import 'package:offline_first/features/auth/domain/usecases/user_logout.dart';
 import 'package:offline_first/features/auth/domain/usecases/user_sign_up.dart';
@@ -60,6 +61,8 @@ void _initAuth() {
     ..registerFactory(() => UserLogin(serviceLocator()))
     ..registerFactory(() => CurrentUser(serviceLocator()))
     ..registerFactory(() => UserLogout(serviceLocator()))
+    ..registerFactory(() => GoogleSignInUseCase(serviceLocator()))
+
     //Bloc
     ..registerLazySingleton(
       () => AuthBloc(
@@ -67,6 +70,7 @@ void _initAuth() {
         userLogin: serviceLocator(),
         currentuser: serviceLocator(),
         userlogout: serviceLocator(),
+        googleSignInUseCase: serviceLocator(),
         appUserCubit: serviceLocator(),
       ),
     );

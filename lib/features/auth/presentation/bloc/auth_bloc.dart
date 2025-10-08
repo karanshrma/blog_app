@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:offline_first/core/common/app_user/app_user_cubit.dart';
 import 'package:offline_first/core/usecase/usecase.dart';
+import 'package:offline_first/core/utils/user_mapper.dart';
 import 'package:offline_first/features/auth/domain/usecases/current_user.dart';
+import 'package:offline_first/features/auth/domain/usecases/google_sign_in.dart';
 import 'package:offline_first/features/auth/domain/usecases/user_login.dart';
 import 'package:offline_first/features/auth/domain/usecases/user_logout.dart';
 import 'package:offline_first/features/auth/domain/usecases/user_sign_up.dart';
@@ -19,6 +21,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final CurrentUser _currentUser;
   final UserLogout _userLogout;
   final AppUserCubit _appUserCubit;
+  final GoogleSignInUseCase _googleSignInUseCase;
 
   AuthBloc({
     required UserLogin userLogin,
@@ -26,11 +29,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required CurrentUser currentuser,
     required AppUserCubit appUserCubit,
     required UserLogout userlogout,
+    required GoogleSignInUseCase googleSignInUseCase,
   }) : _userSignUp = usersignup,
        _userLogin = userLogin,
        _currentUser = currentuser,
        _userLogout = userlogout,
        _appUserCubit = appUserCubit,
+      _googleSignInUseCase = googleSignInUseCase,
 
        super(AuthInitial()) {
     on<AuthEvent>((_, emit) => emit(AuthLoading()));
@@ -38,6 +43,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthLogin>(_onAuthLogin);
     on<AuthIsUserLoggedIn>(_isUserLoggedIn);
     on<LogoutRequested>(_logoutUser);
+    on<GoogleSignInEvent>(_onGoogleSignIn);
   }
 
   void _logoutUser(LogoutRequested event, Emitter<AuthState> emit) async {
@@ -99,6 +105,26 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     response.fold(
       (failure) => emit(AuthFailure(failure.message)),
       (user) => _emitAuthSuccess(user, emit),
+    );
+  }
+  void _onGoogleSignIn(GoogleSignInEvent event, Emitter<AuthState> emit) async {
+    print('🔹 _onGoogleSignIn event triggered');
+    emit(AuthLoading());
+
+    final result = await _googleSignInUseCase(NoParams());
+    result.fold(
+          (failure) {
+        print('❌ _onGoogleSignIn failure: ${failure.message}');
+        emit(AuthFailure(failure.message));
+      },
+          (user) {
+        print('✅ _onGoogleSignIn success: ${user.id}, ${user.email}');
+        final mappedUser = mapSupabaseUserToEntity(user);
+        print('📝 Mapped user: ${mappedUser.id}, ${mappedUser.name}, ${mappedUser.email}');
+
+        _appUserCubit.updateUser(mappedUser);
+        emit(AuthSuccess(mappedUser));
+      },
     );
   }
 

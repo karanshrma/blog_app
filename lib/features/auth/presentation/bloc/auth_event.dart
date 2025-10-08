@@ -17,6 +17,9 @@ final class AuthLogin extends AuthEvent {
 
   AuthLogin({required this.email, required this.password});
 }
+final class GoogleSignInEvent extends AuthEvent{
+
+}
 
 
 final class AuthIsUserLoggedIn extends AuthEvent {}

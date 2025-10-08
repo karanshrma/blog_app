@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:offline_first/core/theme/app_pallete.dart';
 import 'package:offline_first/core/utils/show_snackbar.dart';
 import 'package:offline_first/features/auth/presentation/pages/login_page.dart';
@@ -39,6 +40,10 @@ class _SignupPageState extends State<SignupPage> {
     );
   }
 
+  void signInWithGoogle() {
+    context.read<AuthBloc>().add(GoogleSignInEvent());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,17 +62,17 @@ class _SignupPageState extends State<SignupPage> {
               listener: (context, state) {
                 if (state is AuthFailure) {
                   showSnackBar(context, state.message);
-                }
-              },
-              builder: (context, state) {
-                if (state is AuthLoading) {
-                  return const Loader();
                 } else if (state is AuthSuccess) {
                   Navigator.pushAndRemoveUntil(
                     context,
                     BlogPage.route(),
                     (route) => false,
                   );
+                }
+              },
+              builder: (context, state) {
+                if (state is AuthLoading) {
+                  return const Loader();
                 }
                 return Form(
                   key: formKey,
@@ -92,19 +97,36 @@ class _SignupPageState extends State<SignupPage> {
                         isObscure: false,
                       ),
                       const SizedBox(height: 20),
-                      AuthGradientButton(
-                        text: 'Sign Up',
-                        onPressed: () {
-                          if (formKey.currentState!.validate()) {
-                            context.read<AuthBloc>().add(
-                              AuthSignUp(
-                                email: emailController.text.trim(),
-                                name: nameController.text.trim(),
-                                password: passwordController.text.trim(),
+                      Row(
+                        children: [
+                          Flexible(
+                            flex: 3,
+                            child: AuthGradientButton(
+                              text: 'Sign Up',
+                              onPressed: () {
+                                if (formKey.currentState!.validate()) {
+                                  context.read<AuthBloc>().add(
+                                    AuthSignUp(
+                                      email: emailController.text.trim(),
+                                      name: nameController.text.trim(),
+                                      password: passwordController.text.trim(),
+                                    ),
+                                  );
+                                }
+                              },
+                            ),
+                          ),
+                          Flexible(
+                            flex: 1,
+                            child: IconButton(
+                              onPressed: signInWithGoogle,
+                              icon: FaIcon(
+                                FontAwesomeIcons.google,
+                                color: Colors.white,
                               ),
-                            );
-                          }
-                        },
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 20),
                       GestureDetector(

@@ -1,6 +1,8 @@
 import 'package:offline_first/core/error/exceptions.dart';
+import 'package:offline_first/core/secrets/app_secrets.dart';
 import 'package:offline_first/features/auth/data/models/user_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 abstract interface class AuthRemoteDataSource {
   Session? get currentUserSession;
@@ -15,6 +17,8 @@ abstract interface class AuthRemoteDataSource {
     required String email,
     required String password,
   });
+
+  Future<User> signInWithGoogle();
 
   Future<UserModel?> getCurrentUserData();
   Future<void> logout();
@@ -118,5 +122,43 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       throw ServerException(e.toString());
     }
   }
+
+  @override
+  Future<User> signInWithGoogle() async {
+
+    try {
+      const webClientId = '1054557196365-o27lfcrrf2sr3bdl9coag4j21ggm7cur.apps.googleusercontent.com';
+      final scopes = ['email', 'profile'];
+      final googleSignIn = GoogleSignIn.instance;
+      await googleSignIn.initialize(
+        serverClientId: webClientId,
+      );
+      final googleUser = await googleSignIn.attemptLightweightAuthentication();
+      if (googleUser == null) {
+        throw AuthException('Failed to sign in with Google.');
+      }
+      final authorization =
+          await googleUser.authorizationClient.authorizationForScopes(scopes) ??
+              await googleUser.authorizationClient.authorizeScopes(scopes);
+      final idToken = googleUser.authentication.idToken;
+      if (idToken == null) {
+        throw AuthException('No ID Token found.');
+      }
+      await supabaseClient.auth.signInWithIdToken(
+        provider: OAuthProvider.google,
+        idToken: idToken,
+        accessToken: authorization.accessToken,
+      );
+
+      return User(id: googleUser.id,
+          appMetadata: <String, dynamic>{},
+          userMetadata: <String, dynamic>{},
+          aud: '',
+          createdAt: DateTime.now().toString());
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
 
 }

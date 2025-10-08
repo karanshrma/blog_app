@@ -5,9 +5,8 @@ import 'package:offline_first/core/network/network_checker.dart';
 import 'package:offline_first/features/auth/data/datasources/auth_remote_data_sources.dart';
 import 'package:offline_first/features/auth/data/models/user_model.dart';
 import 'package:offline_first/features/auth/domain/repository/auth_repository.dart';
-
-
-import '../../../../core/common/entities/user.dart';
+import '../../../../core/common/entities/user.dart' ;
+import 'package:supabase_flutter/supabase_flutter.dart' as su;
 
 
 class AuthRepositoryImpl implements AuthRepository {
@@ -93,6 +92,27 @@ class AuthRepositoryImpl implements AuthRepository {
       return Left(Failure(e.toString()));
     }
   }
+  @override
+  Future<Either<Failure, su.User>> signInWithGoogle() async {
+    print('🔹 signInWithGoogle called');
+    try {
+      if (!await connectionChecker.isConnected) {
+        print('❌ No internet connection');
+        return left(Failure('No Internet Connection'));
+      }
+
+      print('🌐 Internet connected, calling remoteDataSource.signInWithGoogle()');
+      final googleUser = await remoteDataSource.signInWithGoogle();
+      print('✅ Google sign-in successful: ${googleUser.id}, ${googleUser.email}');
+
+      return Right(googleUser);
+    } catch (e) {
+      print('⚠️ Error in signInWithGoogle: $e');
+      return Left(Failure(e.toString()));
+    }
+  }
+
+
 
 
 }
