@@ -39,15 +39,23 @@ Before you begin, make sure you have the following installed and set up:
 
 ---
 
-### ⚙️ 1. Supabase Setup
+###  1. Supabase Setup
 1. **Create a New Project** in your Supabase dashboard.
 2. **Database Tables**: Create the necessary tables (e.g., `blogs`, `users`) as required by the app’s domain model.
 3. **Storage Buckets**: Set up a storage bucket for saving blog post images.
 
 ---
 
-### 🔑 2. Configure Environment
+### 2. Configure Environment
 1. **Clone this repository**
    ```bash
    git clone https://github.com/karanshrma/blog_app.git
    cd blog_app
+
+2. **Install all the dependencies and run**
+   ```bash
+   flutter clean
+   flutter pub get
+   flutter run
+
+
