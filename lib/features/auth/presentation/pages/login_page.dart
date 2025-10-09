@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:offline_first/core/theme/app_pallete.dart';
 import 'package:offline_first/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:offline_first/features/auth/presentation/pages/signup_page.dart';
@@ -35,6 +38,9 @@ class _LoginPageState extends State<LoginPage> {
       context,
       MaterialPageRoute(builder: (context) => const SignupPage()),
     );
+  }
+  void signInWithGoogle() {
+    context.read<AuthBloc>().add(GoogleSignInEvent());
   }
 
   @override
@@ -79,19 +85,56 @@ class _LoginPageState extends State<LoginPage> {
                       isObscure: false,
                     ),
                     const SizedBox(height: 20),
-                    AuthGradientButton(
-                      // Debug: Print the actual values
-                      text: 'Sign In',
-                      onPressed: () {
-                        if (formKey.currentState!.validate()) {
-                          context.read<AuthBloc>().add(
-                            AuthLogin(
-                              email: emailController.text.trim(),
-                              password: passwordController.text.trim(),
+                    Row(
+                      children: [
+                        Flexible(
+                          flex: 5,
+                          child: AuthGradientButton(
+                            text: 'Sign In',
+                            onPressed: () {
+                              if (formKey.currentState!.validate()) {
+                                context.read<AuthBloc>().add(
+                                  AuthLogin(
+                                    email: emailController.text.trim(),
+                                    password: passwordController.text.trim(),
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Flexible(
+                          flex: 1,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(7),
+                              gradient: SweepGradient(
+                                transform: GradientRotation(-pi / 2),
+                                colors: [
+                                  Color(0xFFEA4335),
+                                  Color(0xFF4285F4),
+                                  Color(0xFF34A853),
+                                  Color(0xFFFBBC05),
+                                  Color(0xFFEA4335),
+                                ],
+                                stops: const [0.0, 0.25, 0.5, 0.75, 1.0],
+                              ),
                             ),
-                          );
-                        }
-                      },
+
+                            child: IconButton(
+                              style: IconButton.styleFrom(
+                                fixedSize: Size(55, 55),
+                              ),
+                              onPressed: signInWithGoogle,
+                              icon: FaIcon(
+                                FontAwesomeIcons.google,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 20),
                     GestureDetector(

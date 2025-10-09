@@ -1,6 +1,6 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:offline_first/core/theme/app_pallete.dart';
 import 'package:offline_first/core/utils/show_snackbar.dart';
 import 'package:offline_first/features/auth/presentation/pages/login_page.dart';
@@ -38,10 +38,6 @@ class _SignupPageState extends State<SignupPage> {
       context,
       MaterialPageRoute(builder: (context) => const LoginPage()),
     );
-  }
-
-  void signInWithGoogle() {
-    context.read<AuthBloc>().add(GoogleSignInEvent());
   }
 
   @override
@@ -97,37 +93,22 @@ class _SignupPageState extends State<SignupPage> {
                         isObscure: false,
                       ),
                       const SizedBox(height: 20),
-                      Row(
-                        children: [
-                          Flexible(
-                            flex: 3,
-                            child: AuthGradientButton(
-                              text: 'Sign Up',
-                              onPressed: () {
-                                if (formKey.currentState!.validate()) {
-                                  context.read<AuthBloc>().add(
-                                    AuthSignUp(
-                                      email: emailController.text.trim(),
-                                      name: nameController.text.trim(),
-                                      password: passwordController.text.trim(),
-                                    ),
-                                  );
-                                }
-                              },
-                            ),
-                          ),
-                          Flexible(
-                            flex: 1,
-                            child: IconButton(
-                              onPressed: signInWithGoogle,
-                              icon: FaIcon(
-                                FontAwesomeIcons.google,
-                                color: Colors.white,
+
+                      AuthGradientButton(
+                        text: 'Sign Up',
+                        onPressed: () {
+                          if (formKey.currentState!.validate()) {
+                            context.read<AuthBloc>().add(
+                              AuthSignUp(
+                                email: emailController.text.trim(),
+                                name: nameController.text.trim(),
+                                password: passwordController.text.trim(),
                               ),
-                            ),
-                          ),
-                        ],
+                            );
+                          }
+                        },
                       ),
+
                       const SizedBox(height: 20),
                       GestureDetector(
                         onTap: navigateToSignIn,
